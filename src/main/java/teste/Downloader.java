@@ -19,12 +19,12 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,11 +34,13 @@ import teste.to.BingImages;
 
 public class Downloader {
 	static {
+		System.setProperty("file.encoding", "UTF-8");
 		System.setProperty("java.util.logging.config.file", "log-config.properties");
 	}
-	private static final Log RUNTIMELOGGER = LogFactory.getLog("downloader");
-	private static final String DIR_NAME = "D:/Users/babreu/Pictures/wallpapers/";
-	private static final String LOG_NAME = DIR_NAME + "Download/_download.log";
+	private static final Logger RUNTIMELOGGER = LoggerFactory.getLogger(Downloader.class);
+	private static final String DIR_NAME = "./";
+	private static final String LOG_DIR = DIR_NAME + "log/";
+	private static final String LOG_PATH = LOG_DIR + "_download.log";
 	private static final int NUMBER = 8;
 	private static final int INDEX = 0;
 	private static final String[] MARKETS = { "en-US", "EN-GB", "pt-BR", "EN-CA", "DE-DE", "FR-FR", "JA-JP", "ZH-CN" };
@@ -57,14 +59,22 @@ public class Downloader {
 
 
 	private void backupLog() throws IOException {
-		FileUtils.copyFile(new File(LOG_NAME), new File(LOG_NAME.replace(".log", "-") + FORMATO_NOME.format(new Date()) + ".log"));
+		File dirLog = new File(LOG_DIR);
+		if (!dirLog.exists()) {
+			dirLog.mkdirs();
+		}
+		File logFile = new File(LOG_PATH);
+		if (!logFile.exists()) {
+			logFile.createNewFile();
+		}
+		FileUtils.copyFile(logFile, new File(LOG_PATH.replace(".log", "-") + FORMATO_NOME.format(new Date()) + ".log"));
 	}
 
 
 	private void executar(int index, int number, String market) {
 		BufferedWriter downloadlog = null;
 		try {
-			downloadlog = new BufferedWriter(new FileWriter(LOG_NAME, true));
+			downloadlog = new BufferedWriter(new FileWriter(LOG_PATH, true));
 			List<BingImage> images = callREST(index, number, market).getImages();
 			RUNTIMELOGGER.info("resposta: " + market + " " + images.toString());
 
@@ -151,7 +161,7 @@ public class Downloader {
 
 	private boolean downloaded(String idImagem, String idImagemNew) {
 		try {
-			FileReader fr = new FileReader(LOG_NAME);
+			FileReader fr = new FileReader(LOG_PATH);
 			BufferedReader br = new BufferedReader(fr);
 			String idLog = br.readLine();
 			while (idLog != null) {
