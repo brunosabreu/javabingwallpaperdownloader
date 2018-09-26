@@ -50,10 +50,14 @@ public class Downloader {
 
 
 	public static void main(String[] args) throws Exception {
-		Downloader teste = new Downloader();
-		teste.backupLog();
+		Downloader downloader = new Downloader();
+		downloader.backupLog();
 		for (int i = 0; i < MARKETS.length; i++) {
-			teste.executar(INDEX, NUMBER, MARKETS[i]);
+			if (i < 3) {
+				downloader.executar(INDEX, NUMBER, MARKETS[i]);
+			} else {
+				downloader.executar(INDEX + 1, NUMBER, MARKETS[i]);
+			}
 		}
 	}
 
