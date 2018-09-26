@@ -56,7 +56,7 @@ public class Downloader {
 			if (i < 3) {
 				downloader.executar(INDEX, NUMBER, MARKETS[i]);
 			} else {
-				downloader.executar(INDEX + 1, NUMBER, MARKETS[i]);
+				downloader.executar(INDEX + 2, NUMBER, MARKETS[i]);
 			}
 		}
 	}
