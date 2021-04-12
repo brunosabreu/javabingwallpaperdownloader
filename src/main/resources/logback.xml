@@ -1,10 +1,23 @@
 <configuration>
 
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>log/runtime.log</file>
+	<appender name="DOWNLOAD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>log/download.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">    	
      		<!-- daily rollover -->
-			<fileNamePattern>log/runtime-%d.log</fileNamePattern>
+			<fileNamePattern>log/download-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="RUNTIME_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>log/runtime/runtime.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">    	
+     		<!-- daily rollover -->
+			<fileNamePattern>log/runtime/runtime-%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 
@@ -18,11 +31,16 @@
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %msg%n</Pattern>
 		</layout>
 	</appender>
-	
+
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+
+	<logger name="download" additivity="false">
+		<appender-ref ref="DOWNLOAD_FILE" />
+	</logger>
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
+		<appender-ref ref="RUNTIME_FILE" />
 	</root>
 </configuration>
